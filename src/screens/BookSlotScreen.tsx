@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import {
   ImageBackground,
   SafeAreaView,
@@ -9,6 +9,8 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  Animated,
+  Easing,
 } from "react-native";
 import backGroundSource from "../../assets/images/bg.png";
 import { COLORS } from "../../assets/colors";
@@ -18,7 +20,10 @@ import NumberInput from "../components/NumberInput";
 import Button from "../components/Button";
 import CheckBox from "../components/CheckBox";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useDeviceOrientation } from "@react-native-community/hooks";
+import {
+  useDeviceOrientation,
+  useKeyboard,
+} from "@react-native-community/hooks";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import ReadyScreen from "./ReadyScreen";
@@ -58,6 +63,8 @@ const BookSlotScreen: FC<Props> = ({ navigation }) => {
   const isPortrait = useDeviceOrientation() === "portrait";
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const { keyboardShown } = useKeyboard();
+  const focusAnim = useRef(new Animated.Value(0)).current;
 
   const {
     handleChange,
@@ -65,7 +72,6 @@ const BookSlotScreen: FC<Props> = ({ navigation }) => {
     values,
     errors,
     isValid,
-    dirty,
     validateField,
     setFieldValue,
   } = useFormik<{
@@ -103,14 +109,23 @@ const BookSlotScreen: FC<Props> = ({ navigation }) => {
     );
   };
 
+  useEffect(() => {
+    if (!keyboardShown) {
+      setIsKeyboardShow(false);
+    }
+  }, [keyboardShown]);
+
   const onFocusName = () => {
+    setIsKeyboardShow(true);
     validateField("name");
   };
   const onFocusEmail = () => {
+    setIsKeyboardShow(true);
     validateField("email");
   };
 
   const onFocusPhone = () => {
+    setIsKeyboardShow(true);
     validateField("phone");
   };
 
@@ -118,30 +133,17 @@ const BookSlotScreen: FC<Props> = ({ navigation }) => {
     setIsChecked((state) => !state);
   };
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardWillShow",
-      () => {
-        setIsKeyboardShow(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardWillHide",
-      () => {
-        setIsKeyboardShow(false);
-      }
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
-
   const buttonMargin = useMemo(
-    () => (isKeyboardShow ? 18 : 60),
-    [isKeyboardShow]
+    () => (keyboardShown ? 18 : 60),
+    [keyboardShown]
   );
+
+  const hideKeyBoard = () => {
+    Keyboard.dismiss();
+    if (!keyboardShown) {
+      setIsKeyboardShow(false);
+    }
+  };
 
   if (isSent) {
     return <ReadyScreen navigation={navigation} />;
@@ -161,10 +163,10 @@ const BookSlotScreen: FC<Props> = ({ navigation }) => {
               style={styles.imageContainer}
             >
               <TouchableWithoutFeedback
-                onPress={() => Keyboard.dismiss()}
+                onPress={hideKeyBoard}
                 style={styles.container}
               >
-                <SafeAreaView style={styles.container}>
+                <SafeAreaView style={styles.containerSafeArea}>
                   <Text style={styles.title}>Забронировать слот</Text>
                   <Text style={styles.description}>
                     Оставьте контактные данные, и мы с вами свяжемся в ближайший
@@ -216,8 +218,19 @@ const BookSlotScreen: FC<Props> = ({ navigation }) => {
               </TouchableWithoutFeedback>
             </ImageBackground>
           </KeyboardAvoidingView>
-          <View style={{ alignItems: "center" }}>
-            <View style={styles.checkContainer}>
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={[
+                styles.checkContainer,
+                {
+                  display: isKeyboardShow ? "none" : "flex",
+                },
+              ]}
+            >
               <CheckBox isChecked={isChecked} onPress={onCheckPress} />
               <Text style={styles.checkText}>
                 Я даю согласие на обработку своих данных.
@@ -310,6 +323,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  containerSafeArea: {
+    flex: 1,
+    marginTop: 100,
+  },
   contentContainer: {
     flex: 1,
     justifyContent: "space-between",
@@ -322,7 +339,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     textAlign: "center",
-    fontWeight: "600",
+    fontWeight: Platform.OS === "ios" ? "600" : "700",
     fontFamily: FONT_FAMILY.Raleway,
   },
   description: {
@@ -349,7 +366,7 @@ const styles = StyleSheet.create({
   },
   checkContainer: {
     position: "absolute",
-    bottom: 50,
+    bottom: Platform.OS === "ios" ? 50 : 25,
     marginTop: 16,
     flexDirection: "row",
     justifyContent: "center",

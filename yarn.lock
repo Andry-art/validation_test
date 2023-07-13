@@ -6569,6 +6569,11 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
+use-detect-keyboard-open@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/use-detect-keyboard-open/-/use-detect-keyboard-open-0.4.0.tgz#a1d2cc6521abfabac558c19ff45ed975b7893a1c"
+  integrity sha512-g26dzEDF9qh1VSwYT7ILOdzS0v9xPo5IF3R804HksW+NAOiNd2P2KYrmTfd/5ApfYixlrX2P7+PlsEgAx/lZ6w==
+
 use-latest-callback@^0.1.5:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/use-latest-callback/-/use-latest-callback-0.1.6.tgz#3fa6e7babbb5f9bfa24b5094b22939e1e92ebcf6"

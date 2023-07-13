@@ -50,6 +50,65 @@ const NumberInput: FC<Props> = (props) => {
 
   let color = isFocused ? COLORS.borderColorsActive : COLORS.white;
   let colorText = isFocused ? COLORS.gray : COLORS.black;
+  const animatedPicker = {
+    opacity: focusAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+    }),
+    transform: [
+      {
+        scaleX: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, 1],
+        }),
+      },
+    ],
+  };
+
+  const animatedInput = {
+    transform: [
+      {
+        scaleX: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: isPortrait ? [1, 0.8] : [1, 0.9],
+        }),
+      },
+      {
+        translateX: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: isPortrait ? [-65, -35] : [-65, -27],
+        }),
+      },
+    ],
+  };
+
+  const animatedPlaceHolder = {
+    transform: [
+      {
+        scale: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 0.75],
+        }),
+      },
+      {
+        translateY: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [18, 10],
+        }),
+      },
+      {
+        translateX: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [5, -3],
+        }),
+      },
+    ],
+    opacity: focusAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [1, 0],
+    }),
+  };
+
   if (errorText) {
     color = COLORS.red;
   }
@@ -58,23 +117,7 @@ const NumberInput: FC<Props> = (props) => {
     <View style={style}>
       <View style={{ flexDirection: "row" }}>
         <TouchableOpacity
-          style={[
-            styles.picker,
-            {
-              opacity: focusAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 1],
-              }),
-              transform: [
-                {
-                  scaleX: focusAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 1],
-                  }),
-                },
-              ],
-            },
-          ]}
+          style={[styles.picker, animatedPicker]}
           onPress={() => setIsVisible(true)}
         >
           <CountryPicker
@@ -94,25 +137,7 @@ const NumberInput: FC<Props> = (props) => {
           />
           <Text>{code}</Text>
         </TouchableOpacity>
-        <Animated.View
-          style={{
-            width: "100%",
-            transform: [
-              {
-                scaleX: focusAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: isPortrait ? [1, 0.8] : [1, 0.9],
-                }),
-              },
-              {
-                translateX: focusAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: isPortrait ? [-65, -35] : [-65, -27],
-                }),
-              },
-            ],
-          }}
-        >
+        <Animated.View style={[styles.animatedInput, animatedInput]}>
           <MaskedTextInput
             mask="(999)-999-99-99 99 9"
             type="underline"
@@ -143,37 +168,7 @@ const NumberInput: FC<Props> = (props) => {
         </Animated.View>
       </View>
       <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
-        <Animated.View
-          style={[
-            styles.labelContainer,
-            {
-              transform: [
-                {
-                  scale: focusAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 0.75],
-                  }),
-                },
-                {
-                  translateY: focusAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [18, 10],
-                  }),
-                },
-                {
-                  translateX: focusAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [5, -3],
-                  }),
-                },
-              ],
-              opacity: focusAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0],
-              }),
-            },
-          ]}
-        >
+        <Animated.View style={[styles.labelContainer, animatedPlaceHolder]}>
           <Text
             style={[
               styles.label,
@@ -237,6 +232,9 @@ const styles = StyleSheet.create({
   pickerFlag: {
     opacity: 0,
     position: "absolute",
+  },
+  animatedInput: {
+    width: "100%",
   },
 });
 

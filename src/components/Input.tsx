@@ -31,7 +31,7 @@ const TextField: FC<Props> = (props) => {
 
   const inputRef = useRef<TextInput>(null);
   const focusAnim = useRef(new Animated.Value(0)).current;
-  console.log(errorText);
+
   useEffect(() => {
     Animated.timing(focusAnim, {
       toValue: isFocused || !!value ? 1 : 0,
@@ -43,8 +43,32 @@ const TextField: FC<Props> = (props) => {
 
   let color = isFocused ? COLORS.borderColorsActive : COLORS.white;
   let colorText = isFocused ? COLORS.gray : COLORS.black;
+
+  const animatedText = {
+    transform: [
+      {
+        scale: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 0.75],
+        }),
+      },
+      {
+        translateY: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [18, 10],
+        }),
+      },
+      {
+        translateX: focusAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [5, -3],
+        }),
+      },
+    ],
+  };
+
   if (errorText) {
-    COLORS.red;
+    color = COLORS.red;
   }
 
   return (
@@ -69,33 +93,7 @@ const TextField: FC<Props> = (props) => {
         }}
       />
       <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
-        <Animated.View
-          style={[
-            styles.labelContainer,
-            {
-              transform: [
-                {
-                  scale: focusAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 0.75],
-                  }),
-                },
-                {
-                  translateY: focusAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [18, 10],
-                  }),
-                },
-                {
-                  translateX: focusAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [5, -3],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
+        <Animated.View style={[styles.labelContainer, animatedText]}>
           <Text
             style={[
               styles.label,
@@ -136,7 +134,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 12,
     fontSize: 13,
-    fontFamily: FONT_FAMILY.Raleway,
     fontWeight: "400",
     color: COLORS.red,
   },

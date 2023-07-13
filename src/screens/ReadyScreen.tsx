@@ -47,48 +47,11 @@ const ReadyScreen: FC<Props> = ({ navigation }) => {
       style={styles.imageContainer}
     >
       <SafeAreaView style={styles.containerDone}>
-        <Animated.View
-          style={[
-            {
-              width: 66,
-              height: 66,
-              backgroundColor: COLORS.green,
-              borderRadius: 100,
-              justifyContent: "center",
-              alignItems: "center",
-            },
-            { transform: [{ scale }] },
-          ]}
-        >
-          <Image
-            source={checkSource}
-            style={{
-              width: 35,
-              height: 23,
-            }}
-          />
+        <Animated.View style={[styles.circle, { transform: [{ scale }] }]}>
+          <Image source={checkSource} style={styles.img} />
         </Animated.View>
-        <Text
-          style={{
-            fontSize: 24,
-            fontWeight: "600",
-            textAlign: "center",
-            fontFamily: FONT_FAMILY.Raleway,
-            marginTop: 50,
-          }}
-        >
-          Готово
-        </Text>
-        <Text
-          style={{
-            fontSize: 15,
-            fontWeight: "400",
-            textAlign: "center",
-            fontFamily: FONT_FAMILY.Raleway,
-            color: COLORS.gray,
-            marginTop: 10,
-          }}
-        >
+        <Text style={styles.title}>Готово</Text>
+        <Text style={styles.info}>
           Заявка отправлена. Мы с вами свяжемся в ближайший час.
         </Text>
         <Button title="Ok" style={styles.button} onPress={moveBack} />
@@ -112,6 +75,33 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 40,
     backgroundColor: COLORS.active,
+  },
+  circle: {
+    width: 66,
+    height: 66,
+    backgroundColor: COLORS.green,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  img: {
+    width: 35,
+    height: 23,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    textAlign: "center",
+    fontFamily: FONT_FAMILY.Raleway,
+    marginTop: 50,
+  },
+  info: {
+    fontSize: 15,
+    fontWeight: "400",
+    textAlign: "center",
+    fontFamily: FONT_FAMILY.Raleway,
+    color: COLORS.gray,
+    marginTop: 10,
   },
 });
 
