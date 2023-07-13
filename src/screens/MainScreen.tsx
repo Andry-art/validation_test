@@ -1,7 +1,8 @@
 import React, { FC } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ImageBackground } from "react-native";
 import Button from "../components/Button";
 import { COLORS } from "../../assets/colors";
+import backGroundSource from "../../assets/images/bg.png";
 
 interface Props {
   navigation: any;
@@ -13,13 +14,17 @@ const MainScreen: FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={backGroundSource}
+      resizeMode="cover"
+      style={styles.container}
+    >
       <Button
         style={styles.button}
         title={"Забронировать слот"}
         onPress={moveToBookSlot}
       />
-    </View>
+    </ImageBackground>
   );
 };
 
