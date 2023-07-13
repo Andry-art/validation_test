@@ -21,7 +21,7 @@ const CheckBox: FC<Props> = ({ isChecked, onPress }) => {
       style={isChecked ? styles.containerActive : styles.containerInActive}
       onPress={onPress}
     >
-      <Image source={checkSource} />
+      {isChecked && <Image source={checkSource} />}
     </TouchableOpacity>
   );
 };

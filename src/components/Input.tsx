@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { COLORS } from "../../assets/colors";
+import { FONT_FAMILY } from "../../assets/constFonts";
 
 type Props = ComponentProps<typeof TextInput> & {
   label: string;
@@ -16,13 +17,21 @@ type Props = ComponentProps<typeof TextInput> & {
 };
 
 const TextField: FC<Props> = (props) => {
-  const { label, errorText, value, style, onBlur, onFocus, ...restOfProps } =
-    props;
+  const {
+    label,
+    errorText,
+    value,
+    style,
+    onBlur,
+    onFocus,
+    id,
+    ...restOfProps
+  } = props;
   const [isFocused, setIsFocused] = useState(false);
 
   const inputRef = useRef<TextInput>(null);
   const focusAnim = useRef(new Animated.Value(0)).current;
-
+  console.log(errorText);
   useEffect(() => {
     Animated.timing(focusAnim, {
       toValue: isFocused || !!value ? 1 : 0,
@@ -35,7 +44,7 @@ const TextField: FC<Props> = (props) => {
   let color = isFocused ? COLORS.borderColorsActive : COLORS.white;
   let colorText = isFocused ? COLORS.gray : COLORS.black;
   if (errorText) {
-    color = "#B00020";
+    COLORS.red;
   }
 
   return (
@@ -96,7 +105,6 @@ const TextField: FC<Props> = (props) => {
             ]}
           >
             {label}
-            {errorText ? "*" : ""}
           </Text>
         </Animated.View>
       </TouchableWithoutFeedback>
@@ -125,10 +133,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   error: {
-    marginTop: 4,
+    marginTop: 10,
     marginLeft: 12,
-    fontSize: 12,
-    color: "#B00020",
+    fontSize: 13,
+    fontFamily: FONT_FAMILY.Raleway,
+    fontWeight: "400",
+    color: COLORS.red,
   },
 });
 

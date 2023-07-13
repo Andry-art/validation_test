@@ -12,15 +12,25 @@ import {
 import { COLORS } from "../../assets/colors";
 import CountryPicker from "react-native-country-picker-modal";
 import { useDeviceOrientation } from "@react-native-community/hooks";
+import { MaskedTextInput } from "react-native-mask-text";
 
 type Props = ComponentProps<typeof TextInput> & {
   label: string;
   errorText?: string | null;
+  onChangeText: (text: string) => void;
 };
 
 const NumberInput: FC<Props> = (props) => {
-  const { label, errorText, value, style, onBlur, onFocus, ...restOfProps } =
-    props;
+  const {
+    label,
+    errorText,
+    value,
+    style,
+    onBlur,
+    onFocus,
+    onChangeText,
+    ...restOfProps
+  } = props;
   const [isFocused, setIsFocused] = useState(false);
   const [code, setCode] = useState("+7");
   const [isVisible, setIsVisible] = useState(false);
@@ -31,7 +41,7 @@ const NumberInput: FC<Props> = (props) => {
 
   useEffect(() => {
     Animated.timing(focusAnim, {
-      toValue: isFocused || !!value ? 1 : 0,
+      toValue: isFocused || !!value || !!errorText ? 1 : 0,
       duration: 500,
       easing: Easing.bezier(0.4, 0, 0.2, 1),
       useNativeDriver: true,
@@ -41,7 +51,7 @@ const NumberInput: FC<Props> = (props) => {
   let color = isFocused ? COLORS.borderColorsActive : COLORS.white;
   let colorText = isFocused ? COLORS.gray : COLORS.black;
   if (errorText) {
-    color = "#B00020";
+    color = COLORS.red;
   }
 
   return (
@@ -49,16 +59,7 @@ const NumberInput: FC<Props> = (props) => {
       <View style={{ flexDirection: "row" }}>
         <TouchableOpacity
           style={[
-            {
-              width: 64,
-              height: 55,
-              backgroundColor: COLORS.white,
-              justifyContent: "center",
-              alignItems: "center",
-              borderTopLeftRadius: 12,
-              borderBottomLeftRadius: 12,
-              display: "flex",
-            },
+            styles.picker,
             {
               opacity: focusAnim.interpolate({
                 inputRange: [0, 1],
@@ -83,12 +84,9 @@ const NumberInput: FC<Props> = (props) => {
             withAlphaFilter
             withCallingCode
             onSelect={(item) => {
-              setCode(`+${item.callingCode[0]}`), setIsFocused(true);
+              setCode(`+${item.callingCode[0] ?? ""}`), setIsFocused(true);
             }}
-            containerButtonStyle={{
-              opacity: 0,
-              position: "absolute",
-            }}
+            containerButtonStyle={styles.pickerFlag}
             visible={isVisible}
             onClose={() => {
               setIsVisible(false), setIsFocused(true);
@@ -115,16 +113,24 @@ const NumberInput: FC<Props> = (props) => {
             ],
           }}
         >
-          <TextInput
+          <MaskedTextInput
+            mask="(999)-999-99-99 99 9"
+            type="underline"
             style={[
-              isFocused ? styles.inputScaled : styles.input,
+              isFocused || !!errorText || !!value
+                ? styles.inputScaled
+                : styles.input,
               {
                 borderColor: color,
               },
             ]}
             ref={inputRef}
             {...restOfProps}
+            onChangeText={(text, rawText) => {
+              onChangeText(rawText);
+            }}
             value={value}
+            placeholder={isFocused ? "(***)-***-**-**" : ""}
             onBlur={(event) => {
               setIsFocused(false);
               onBlur?.(event);
@@ -177,7 +183,6 @@ const NumberInput: FC<Props> = (props) => {
             ]}
           >
             {label}
-            {errorText ? "*" : ""}
           </Text>
         </Animated.View>
       </TouchableWithoutFeedback>
@@ -214,10 +219,24 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   error: {
-    marginTop: 4,
-    marginLeft: 12,
+    marginTop: 10,
+    marginLeft: 80,
     fontSize: 12,
-    color: "#B00020",
+    color: COLORS.red,
+  },
+  picker: {
+    width: 64,
+    height: 55,
+    backgroundColor: COLORS.white,
+    justifyContent: "center",
+    alignItems: "center",
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
+    display: "flex",
+  },
+  pickerFlag: {
+    opacity: 0,
+    position: "absolute",
   },
 });
 

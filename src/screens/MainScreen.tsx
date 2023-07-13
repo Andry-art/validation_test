@@ -21,6 +21,7 @@ const MainScreen: FC<Props> = ({ navigation }) => {
     >
       <Button
         style={styles.button}
+        isLoading={false}
         title={"Забронировать слот"}
         onPress={moveToBookSlot}
       />
