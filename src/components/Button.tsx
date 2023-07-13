@@ -10,7 +10,7 @@ import { COLORS } from "../../assets/colors";
 
 interface Props {
   title: string;
-  style: StyleProp<any>;
+  style?: StyleProp<any>;
   onPress: () => void;
 }
 

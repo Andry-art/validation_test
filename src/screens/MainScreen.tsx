@@ -31,7 +31,7 @@ const MainScreen: FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.background,
     justifyContent: "center",
     paddingHorizontal: 20,
   },
